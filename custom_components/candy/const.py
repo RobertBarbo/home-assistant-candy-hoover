@@ -9,6 +9,7 @@ CONF_INTEGRATION_TITLE = "Candy"
 CONF_KEY_USE_ENCRYPTION = "use_encryption"
 
 MANUFACTURER = "Hoover+Candy"
+DEFAULT_SCAN_INTERVAL_SECONDS = 60
 
 UNIQUE_ID_WASHING_MACHINE = "{0}-washing_machine"
 UNIQUE_ID_WASH_CYCLE_STATUS = "{0}-wash_cycle_status"

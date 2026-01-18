@@ -7,7 +7,7 @@ from datetime import timedelta
 import async_timeout
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_IP_ADDRESS, CONF_PASSWORD
+from homeassistant.const import CONF_IP_ADDRESS, CONF_PASSWORD, CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -28,6 +28,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     session = async_get_clientsession(hass)
     client = CandyClient(session, ip_address, encryption_key, use_encryption)
 
+    scan_interval_seconds = config_entry.options.get(
+        CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_SECONDS
+    )
+
     async def update_status():
         try:
             async with async_timeout.timeout(40):
@@ -41,7 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         hass,
         _LOGGER,
         name=DOMAIN,
-        update_interval=timedelta(seconds=60),
+        update_interval=timedelta(seconds=scan_interval_seconds),
         update_method=update_status,
     )
 

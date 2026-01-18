@@ -2,7 +2,8 @@ from unittest.mock import patch
 
 import pytest
 from homeassistant import config_entries, data_entry_flow
-from homeassistant.const import CONF_IP_ADDRESS, CONF_PASSWORD
+from homeassistant.const import CONF_IP_ADDRESS, CONF_PASSWORD, CONF_SCAN_INTERVAL
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.candy import DOMAIN, CONF_KEY_USE_ENCRYPTION
 from custom_components.candy.client import Encryption
@@ -157,3 +158,25 @@ async def test_detected_encryption_without_key(hass, detect_encryption_without_k
         CONF_PASSWORD: ""
     }
     assert result["result"]
+
+
+async def test_options_flow_default(hass):
+    entry = MockConfigEntry(domain=DOMAIN, data={CONF_IP_ADDRESS: "192.168.0.66"})
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    assert result["type"] == data_entry_flow.FlowResultType.FORM
+    assert result["step_id"] == "init"
+
+
+async def test_options_flow_set_scan_interval(hass):
+    entry = MockConfigEntry(domain=DOMAIN, data={CONF_IP_ADDRESS: "192.168.0.66"})
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result2 = await hass.config_entries.options.async_configure(
+        result["flow_id"], user_input={CONF_SCAN_INTERVAL: 10}
+    )
+
+    assert result2["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
+    assert entry.options[CONF_SCAN_INTERVAL] == 10

@@ -14,7 +14,8 @@ Custom component for [Home Assistant](https://homeassistant.io) that integrates 
    - oven
    - dishwasher
 - Uses the local API and its status endpoint
-- Creates various sensors, such as device state and remaining time. Everything else is exposed as sensor attributes
+- Creates various sensors, such as device state and remaining time
+- Tumble dryer: exposes common status attributes as separate sensors/binary sensors (program, remaining minutes, dry level, door closed, etc.)
 
 ## Installation
 
@@ -27,6 +28,8 @@ Custom component for [Home Assistant](https://homeassistant.io) that integrates 
 ## Configuration
 
 You need the IP address of the machine and the encryption key. This can be guessed with [CandySimplyFi-tool](https://github.com/MelvinGr/CandySimplyFi-tool).
+
+Polling interval can be adjusted in Home Assistant under the integration's Options (default: 60 seconds).
 
 
 ## My device isn't supported. Can you help?
