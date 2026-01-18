@@ -16,10 +16,23 @@
 # pytest includes fixtures OOB which you can use as defined on this page)
 from unittest.mock import patch
 from aiolimiter import AsyncLimiter
+import asyncio
+import sys
 
 import pytest
 
 pytest_plugins = "pytest_homeassistant_custom_component"
+
+
+@pytest.fixture
+def event_loop(request):
+    """Create an event loop (Windows needs sockets enabled for loop internals)."""
+    if sys.platform == "win32":
+        request.getfixturevalue("socket_enabled")
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    asyncio.set_event_loop(loop)
+    yield loop
+    loop.close()
 
 
 # This fixture enables loading custom integrations in all tests.

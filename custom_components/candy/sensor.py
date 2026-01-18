@@ -36,7 +36,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
         async_add_entities([
             CandyTumbleDryerSensor(coordinator, config_id),
             CandyTumbleStatusSensor(coordinator, config_id),
-            CandyTumbleRemainingTimeSensor(coordinator, config_id)
+            CandyTumbleRemainingTimeSensor(coordinator, config_id),
+            CandyTumbleProgramSensor(coordinator, config_id),
+            CandyTumbleRemainingMinutesSensor(coordinator, config_id),
+            CandyTumbleDryLevelSensor(coordinator, config_id),
+            CandyTumbleDryLevelNowSensor(coordinator, config_id),
         ])
     elif isinstance(coordinator.data, OvenStatus):
         async_add_entities([
@@ -62,7 +66,7 @@ class CandyBaseSensor(CoordinatorEntity, SensorEntity):
         return DeviceInfo(
             identifiers={(DOMAIN, self.config_id)},
             name=self.device_name(),
-            manufacturer="Candy",
+            manufacturer=MANUFACTURER,
             suggested_area=self.suggested_area(),
         )
 
@@ -285,6 +289,114 @@ class CandyTumbleRemainingTimeSensor(CandyBaseSensor):
     @property
     def icon(self) -> str:
         return "mdi:progress-clock"
+
+
+class CandyTumbleProgramSensor(CandyBaseSensor):
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_TUMBLE_DRYER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_BATHROOM
+
+    @property
+    def name(self) -> str:
+        return "Dryer program"
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_TUMBLE_PROGRAM.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: TumbleDryerStatus = self.coordinator.data
+        return status.program
+
+    @property
+    def icon(self) -> str:
+        return "mdi:playlist-play"
+
+
+class CandyTumbleRemainingMinutesSensor(CandyBaseSensor):
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_TUMBLE_DRYER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_BATHROOM
+
+    @property
+    def name(self) -> str:
+        return "Dryer remaining minutes"
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_TUMBLE_REMAINING_MINUTES.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: TumbleDryerStatus = self.coordinator.data
+        return status.remaining_minutes
+
+    @property
+    def unit_of_measurement(self) -> str:
+        return UnitOfTime.MINUTES
+
+    @property
+    def icon(self) -> str:
+        return "mdi:timer-outline"
+
+
+class CandyTumbleDryLevelSensor(CandyBaseSensor):
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_TUMBLE_DRYER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_BATHROOM
+
+    @property
+    def name(self) -> str:
+        return "Dryer dry level"
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_TUMBLE_DRY_LEVEL.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: TumbleDryerStatus = self.coordinator.data
+        return status.dry_level
+
+    @property
+    def icon(self) -> str:
+        return "mdi:tumble-dryer"
+
+
+class CandyTumbleDryLevelNowSensor(CandyBaseSensor):
+
+    def device_name(self) -> str:
+        return DEVICE_NAME_TUMBLE_DRYER
+
+    def suggested_area(self) -> str:
+        return SUGGESTED_AREA_BATHROOM
+
+    @property
+    def name(self) -> str:
+        return "Dryer dry level now"
+
+    @property
+    def unique_id(self) -> str:
+        return UNIQUE_ID_TUMBLE_DRY_LEVEL_NOW.format(self.config_id)
+
+    @property
+    def state(self) -> StateType:
+        status: TumbleDryerStatus = self.coordinator.data
+        return status.dry_level_selected
+
+    @property
+    def icon(self) -> str:
+        return "mdi:tumble-dryer"
 
 
 class CandyOvenSensor(CandyBaseSensor):

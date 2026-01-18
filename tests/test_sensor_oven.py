@@ -87,7 +87,7 @@ async def test_main_sensor_device_info(hass: HomeAssistant, aioclient_mock: Aioh
     device = device_reg.async_get(entry.device_id)
 
     assert device
-    assert device.manufacturer == "Candy"
+    assert device.manufacturer == "Hoover+Candy"
     assert device.name == "Oven"
     assert device.suggested_area == "Kitchen"
 
